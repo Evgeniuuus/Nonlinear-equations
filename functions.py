@@ -1,4 +1,3 @@
-import sympy as sp
 import numpy as np
 
 
@@ -6,21 +5,33 @@ def f(arg):
     return arg ** 2 + 4 * np.sin(float(arg))
 
 
-# Нашли эквивалентную функцию
-def phi(arg):
-    return np.arcsin(((-1)*float(arg)**2)/4)        # - только c нулем работает
-                                                    #np.sqrt(4*np.sin((-1)*float(arg))) - расходится
-                                                    #-4 * np.sin(float(arg))/arg - расходится
+# Нашел функцию, которая сходится именно к корню -1,9375
+def phi1(arg):
+    return -1 * np.sqrt(4*np.sin((-1)*float(arg)))
+
+
+# Старую перенес сюда
+def phi2(arg):
+    return np.arcsin(((-1)*float(arg)**2)/4)
 
 
 def df(x):  # Производная f(x)
     return 2*x + 4 * np.cos(float(x))
 
 
-def Iteration(xn, epsilon, k):
+def Iteration1(xn, epsilon, k):
     while True:
         k += 1
-        xn_next = phi(xn)
+        xn_next = phi1(xn)
+        if abs(xn_next - xn) <= epsilon:
+            return xn_next, k
+        xn = xn_next
+
+
+def Iteration2(xn, epsilon, k):
+    while True:
+        k += 1
+        xn_next = phi2(xn)
         if abs(xn_next - xn) <= epsilon:
             return xn_next, k
         xn = xn_next

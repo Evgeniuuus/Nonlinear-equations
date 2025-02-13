@@ -1,7 +1,7 @@
 import sympy as sp
-import numpy as np
 import matplotlib.pyplot as plt
 from functions import *
+import subprocess
 
 function = "x^2 + 4*sin(x)"
 diff1 = sp.diff(function, sp.Symbol('x'), 1)
@@ -36,23 +36,31 @@ x = np.linspace(-5, 5, 1000)
 y = x ** 2 + 4 * np.sin(x)
 y0 = np.zeros(1000)
 
+root1 = [0, -1.93375376282]
+root2 = [0, 0]
+
 plt.title('График', fontsize=14, fontname='Times New Roman')
 plt.plot(x, y, color="red", label="x^2 + 4*sin(x)")
 plt.plot(x, y0, '--', color="green", label="y = 0")
+plt.scatter(root1, root2, color='blue', label='Найденные корни')
 plt.grid()
 plt.legend()
-plt.show()                 # теперь построим график и убедимся сами
+plt.show()
+
+# Теперь построим график производных для каждой фи и убедимся сами что они ограничены единицей
+
+subprocess.run(["python", "diff_phi.py"])
 
 epsilon = np.double(input("Введите Эпсилон: "))
 
 print('\n-----------------------Метод простой итерации-----------------------')
 k = 0
 
-x1, k = Iteration(intervals[0][1], epsilon, k)          # Если подставить левую границу не будет сходиться даже к нулю
+x1, k = Iteration1(intervals[0][1], epsilon, k)          # Если подставить левую границу не будет сходиться даже к нулю
 print(f"1-й Корень:{x1:.10f} \tбыл найдем через {k} итераций")
 
 
-x2, k = Iteration(intervals[1][1], epsilon, k)
+x2, k = Iteration2(intervals[1][1], epsilon, k)
 print(f"2-й Корень:{x2:.10f} \tбыл найдем через {k} итераций")
 
 print("\n---------------------------Метод Ньютона---------------------------")
