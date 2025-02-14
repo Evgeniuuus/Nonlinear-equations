@@ -119,4 +119,3 @@ elif df2(intervals[1][1])*f(intervals[1][1]) > 0:
     x2, k = Chebishev(intervals[1][1], epsilon, k)
 
 print(f"2-й Корень: {x2:.10f} \tбыл найдем через {k} итераций \t{check(x2, epsilon)}")
-
