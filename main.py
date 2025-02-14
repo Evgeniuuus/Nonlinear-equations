@@ -4,14 +4,10 @@ from functions import *
 import subprocess
 
 function = "x^2 + 4*sin(x)"
-diff1 = sp.diff(function, sp.Symbol('x'), 1)
-diff2 = sp.diff(function, sp.Symbol('x'), 2)
 
 print("Функция: ", function)
-print("Первая производная = ", diff1)
-print("Вторая производная = ", diff2)
 
-print("\n-----------------------Отделение Корней---------------------------")
+print("\n-------------------------Отделение Корней--------------------------")
 
 x_min, x_max = -5, 5                # Сначала проверим аналитически
 step = 0.21
@@ -36,7 +32,7 @@ x = np.linspace(-5, 5, 1000)
 y = x ** 2 + 4 * np.sin(x)
 y0 = np.zeros(1000)
 
-root1 = [0, -1.93375376282]
+root1 = [0, -1.93375376282]     # Находим в онлайн калькуляторе корни и записали сюда
 root2 = [0, 0]
 
 plt.title('График', fontsize=14, fontname='Times New Roman')
@@ -47,42 +43,80 @@ plt.grid()
 plt.legend()
 plt.show()
 
-# Теперь построим график производных для каждой фи и убедимся сами что они ограничены единицей
+diff1 = sp.diff(function, sp.Symbol('x'), 1)
+diff2 = sp.diff(function, sp.Symbol('x'), 2)
+print("Первая производная: ", diff1)
+print("Вторая производная: ", diff2)
 
+# Теперь построим график производных для каждой фи и убедимся сами, что они ограничены единицей
 subprocess.run(["python", "diff_phi.py"])
 
 epsilon = np.double(input("Введите Эпсилон: "))
 
-print('\n-----------------------Метод простой итерации-----------------------')
+print('\n-----------------------Метод простой итерации----------------------')
 k = 0
 
 x1, k = Iteration1(intervals[0][1], epsilon, k)          # Если подставить левую границу не будет сходиться даже к нулю
-print(f"1-й Корень:{x1:.10f} \tбыл найдем через {k} итераций")
-
+print(f"1-й Корень:{x1:.10f} \tбыл найдем через {k} итераций \t{check(x1, epsilon)}")
 
 x2, k = Iteration2(intervals[1][1], epsilon, k)
-print(f"2-й Корень:{x2:.10f} \tбыл найдем через {k} итераций")
+print(f"2-й Корень:{x2:.10f} \tбыл найдем через {k} итераций \t{check(x2, epsilon)}")
 
-print("\n---------------------------Метод Ньютона---------------------------")
+print("\n---------------------------Метод Ньютона----------------------------")
+k = 0
 
-if df(intervals[0][0])*intervals[0][0] > 0:
-    x1, k = Newton(intervals[0][0], epsilon, k)
-elif df(intervals[0][1]) * intervals[0][1] > 0:
+if df2(intervals[0][0])*f(intervals[0][0]) > 0:             # Выбираем такой конец отрезка, чтобы знак значения функции
+    x1, k = Newton(intervals[0][0], epsilon, k)             # совпадал со знаком её второй производной
+elif df2(intervals[0][1]) * f(intervals[0][1]) > 0:
     x1, k = Newton(intervals[0][1], epsilon, k)
-print(f"1-й Корень: {x1:.10f} \tбыл найдем через {k} итераций")
 
-if df(intervals[1][0])*intervals[1][0] > 0:
+print(f"1-й Корень: {x1:.10f} \tбыл найдем через {k} итераций \t{check(x1, epsilon)}")
+
+
+if df2(intervals[1][0])*f(intervals[1][0]) > 0:
     x2, k = Newton(intervals[1][0], epsilon, k)
-elif df(intervals[1][1])*intervals[1][1] > 0:
+elif df2(intervals[1][1])*f(intervals[1][1]) > 0:
     x2, k = Newton(intervals[1][1], epsilon, k)
-print(f"2-й Корень: {x2:.10f} \tбыл найдем через {k} итераций")
+
+print(f"2-й Корень: {x2:.10f} \tбыл найдем через {k} итераций \t{check(x2, epsilon)}")
 
 
 print("\n---------------------------Метод Дихотомии---------------------------")
 k = 0
 
 x1, k = Dihotomia(intervals[0][0], intervals[0][1], epsilon, k)
-print(f"1-й Корень: {x1:.10f} \tбыл найдем через {k} итераций")
+print(f"1-й Корень: {x1:.10f} \tбыл найдем через {k} итераций \t{check(x1, epsilon)}")
+
 
 x2, k = Dihotomia(intervals[1][0], intervals[1][1], epsilon, k)
-print(f"2-й Корень: {x2:.10f} \tбыл найдем через {k} итераций")
+print(f"2-й Корень: {x2:.10f} \tбыл найдем через {k} итераций \t{check(x2, epsilon)}")
+
+
+print("\n------------------------------Метод хорд-----------------------------")
+k = 0
+
+x1, k = ChordMethod(intervals[0][0], intervals[0][1], epsilon, k)
+print(f"1-й Корень: {x1:.10f} \tбыл найден через {k} итераций \t{check(x1, epsilon)}")
+
+
+x2, k = ChordMethod(intervals[1][0], intervals[1][1], epsilon, k)
+print(f"2-й Корень: {x2:.10f} \tбыл найден через {k} итераций \t{check(x2, epsilon)}")
+
+print("\n----------------------------Метод Чебышева---------------------------")
+k = 0
+
+if df2(intervals[0][0])*f(intervals[0][0]) > 0:
+    x1, k = Chebishev(intervals[0][0], epsilon, k)
+elif df2(intervals[0][1]) * f(intervals[0][1]) > 0:
+    x1, k = Chebishev(intervals[0][1], epsilon, k)
+
+print(f"1-й Корень: {x1:.10f} \tбыл найдем через {k} итераций \t{check(x1, epsilon)}")
+
+
+if df2(intervals[1][0])*f(intervals[1][0]) > 0:
+    x2, k = Chebishev(intervals[1][0], epsilon, k)
+elif df2(intervals[1][1])*f(intervals[1][1]) > 0:
+    x2, k = Chebishev(intervals[1][1], epsilon, k)
+
+print(f"2-й Корень: {x2:.10f} \tбыл найдем через {k} итераций \t{check(x2, epsilon)}")
+
