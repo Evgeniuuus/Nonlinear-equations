@@ -57,7 +57,7 @@ def Dihotomia(a, b, epsilon, k):
     while (b - a) / 2 > epsilon:                # Делим интервал пополам пока он больше Эпсилон
         k += 1
         c = (a + b) / 2
-        if f(c) == 0:
+        if abs(f(c)) <= epsilon:
             return c, k                        # Нашли точный корень либо
         elif f(a) * f(c) < 0:
             b = c                           # Корень в [a, c]
@@ -67,25 +67,8 @@ def Dihotomia(a, b, epsilon, k):
     return (a + b) / 2, k
 
 
-'''
-def Dihotomia(a, b, epsilon, k):
-    xn = a
-    h = (b - a) / 2
-    while True:
-        k += 1
-        x_next = xn + np.sign(f(a)) * np.sign(xn) * h
-        
-        if abs(x_next - xn) <= epsilon:
-            return x_next, k
-
-
-        xn = x_next
-        h /= 2
-'''
-
-
 def ChordMethod(a, b, epsilon, k):
-    if f(a) > 0:  # Выбираем неподвижный конец отрезка в зависимости от знака
+    if f(a) > 0:                # Выбираем неподвижный конец отрезка в зависимости от знака
         x_fixed, xn = a, b
     else:
         x_fixed, xn = b, a
@@ -95,7 +78,7 @@ def ChordMethod(a, b, epsilon, k):
         x_next = xn - (f(xn) * (xn - x_fixed)) / (f(xn) - f(x_fixed))
 
         if abs(x_next - xn) <= epsilon:
-            return xn, k
+            return x_next, k
 
         xn = x_next
 
